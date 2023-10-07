@@ -1,2 +1,7 @@
-package Lab1;public class App {
+package Lab1;
+
+public class App {
+    public static void main(String[] args) {
+
+    }
 }
