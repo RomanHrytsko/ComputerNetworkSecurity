@@ -14,30 +14,22 @@ import Lab1.LinearCongruentialGenerator;
 
 public class App {
     public static void main(String[] args) {
-        int wordSizeInBits = 32;  // приклад для розміру слова в 32 біта
-        int rounds = 12;  // приклад для 12 раундів
-        int keySizeInBytes = 16;  // приклад для ключа розміром 16 байт
-
-        RC5 rc5 = new RC5(wordSizeInBits, rounds, keySizeInBytes);
-
-        String passwordPhrase = "MySecretPassword";
-
-        try {
-            System.out.println("Encrypting file...");
-            rc5.encryptFile("src/Lab3/sample.txt", "src/Lab3/sample_encrypted.txt", passwordPhrase);
-            System.out.println("Encryption complete! Encrypted file saved as sample_encrypted.txt");
-
-            System.out.println("Decrypting file...");
-            rc5.decryptFile("src/Lab3/sample_encrypted.txt", "src/Lab3/sample_decrypted.txt", passwordPhrase);
-            System.out.println("Decryption complete! Decrypted file saved as sample_decrypted.txt");
-
-            System.out.println("Done!");
-            checkFileIndentity("src/Lab3/sample.txt", "src/Lab3/sample_decrypted.txt");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
+        String plaintext = "Hello World";
+        byte[] key = new byte[16];
+        for (int i = 0; i < 16; i++) {
+            key[i] = (byte) i;  // простий ключ для тестування
         }
+        Lab3.RC5 rc5_cbc_pad = new Lab3.RC5(key);
+
+        byte[] iv = generateIV();  // 8 bytes IV for two 32-bit blocks
+//        new Random().nextBytes(iv);  // Random IV for each encryption
+
+        byte[] encrypted = rc5_cbc_pad.encryptCBC(plaintext.getBytes(), iv);
+        byte[] decrypted = rc5_cbc_pad.decryptCBC(encrypted, iv);
+
+        System.out.println("Original: " + plaintext);
+        System.out.println("Encrypted: " + new String(encrypted));
+        System.out.println("Decrypted: " + new String(decrypted));
     }
 
     public static String hashKeyWord(String input) {
@@ -69,25 +61,25 @@ public class App {
         return iv;
     }
 
-    public static void checkFileIndentity(String originalFile, String decryptedFile) throws Exception {
-        String originalContent = readFileAsString(originalFile);
-        String decryptedContent = readDecryptedFile(decryptedFile);
-//        String str = new String(data, StandardCharsets.UTF_8);
-        System.out.println("originalContent " + originalContent);
-        System.out.println("decryptedContent " + decryptedContent);
-        if (originalContent.equals(decryptedContent)) {
-            System.out.println("Decryption is successful! Original and decrypted contents are identical.");
-        } else {
-            System.out.println("There seems to be a mismatch between original and decrypted contents.");
-        }
-    }
-    public static String readFileAsString(String filename) throws Exception {
-        return new String(Files.readAllBytes(Paths.get(filename)));
-    }
-
-    public static String readDecryptedFile(String filePath) throws IOException {
-        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-        System.out.println(fileBytes);
-        return new String(fileBytes, StandardCharsets.UTF_8);
-    }
+//    public static void checkFileIndentity(String originalFile, String decryptedFile) throws Exception {
+//        String originalContent = readFileAsString(originalFile);
+//        String decryptedContent = readDecryptedFile(decryptedFile);
+////        String str = new String(data, StandardCharsets.UTF_8);
+//        System.out.println("originalContent " + originalContent);
+//        System.out.println("decryptedContent " + decryptedContent);
+//        if (originalContent.equals(decryptedContent)) {
+//            System.out.println("Decryption is successful! Original and decrypted contents are identical.");
+//        } else {
+//            System.out.println("There seems to be a mismatch between original and decrypted contents.");
+//        }
+//    }
+//    public static String readFileAsString(String filename) throws Exception {
+//        return new String(Files.readAllBytes(Paths.get(filename)));
+//    }
+//
+//    public static String readDecryptedFile(String filePath) throws IOException {
+//        byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+//        System.out.println(fileBytes);
+//        return new String(fileBytes, StandardCharsets.UTF_8);
+//    }
 }
