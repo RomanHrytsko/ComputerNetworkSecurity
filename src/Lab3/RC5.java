@@ -6,7 +6,7 @@ import java.util.Random;
 public class RC5 {
     private static final int w = 32;  // розмір блоку в бітах
     private static final int r = 12;  // кількість раундів
-    private static final int b = 16;  // розмір ключа в байтах (128 біт)
+    public static final int b = 16;  // розмір ключа в байтах (128 біт)
 
     private static final int t = 2 * (r + 1);
     private int[] S = new int[t];
